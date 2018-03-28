@@ -53,7 +53,7 @@ describe('`const` is like `let` plus read-only. ', () => {
     });
   });
 
-  /*var, let or const? notChangeable = 23;*/
+  const notChangeable = 23;
 
   it('const scope leaks too', () => {
     expect(notChangeable).toBe(23);
@@ -62,14 +62,15 @@ describe('`const` is like `let` plus read-only. ', () => {
   describe('complex types are NOT fully read-only', () => {
     it('arrays is not fully read-only', () => {
       const arr = [42, 23];
+      arr.unshift(0);
 
-      //expect(arr[0]).toBe(0);
+      expect(arr[0]).toBe(0);
     });
 
     it('objects are not fully read-only', () => {
       const obj = { x: 1 };
-
-      //expect(obj.x).toBe(2);
+      obj.x = 2;
+      expect(obj.x).toBe(2);
     });
   });
 });
@@ -77,8 +78,8 @@ describe('`const` is like `let` plus read-only. ', () => {
 describe('a template string, is wrapped in ` (backticks) instead of \' or ". ', () => {
   describe('by default, behaves like a normal string', function() {
     it('just surrounded by backticks', function() {
-      /*let str = ??????*/
-      //expect(str).toEqual('like a string');
+      let str = `like a string`;
+      expect(str).toEqual('like a string');
     });
   });
 
@@ -87,28 +88,28 @@ describe('a template string, is wrapped in ` (backticks) instead of \' or ". ', 
 
   describe('can evaluate variables, which are wrapped in "${" and "}"', function() {
     it('e.g. a simple variable "${x}" just gets evaluated', function() {
-      let evaluated = `x=x`;
-      //expect(evaluated).toBe('x=' + x);
+      let evaluated = `x=` + `${x}`;
+      expect(evaluated).toBe('x=' + x);
     });
 
     it('multiple variables get evaluated too', function() {
-      var evaluated = `x+y`;
-      //expect(evaluated).toBe(x + '+' + y);
+      var evaluated = `${x}` + `+` + `${y}`;
+      expect(evaluated).toBe(x + '+' + y);
     });
   });
 
   describe('can evaluate any expression, wrapped inside "${...}"', function() {
     it('all inside "${...}" gets evaluated', function() {
-      var evaluated = Number(`x+y`);
-      //expect(evaluated).toBe(x+y);
+      var evaluated = Number(`${x + y}`);
+      expect(evaluated).toBe(x + y);
     });
 
     it('inside "${...}" can also be a function call', function() {
       function getSchool() {
         return 'Ironhack';
       }
-      var evaluated = `getSchool()`;
-      //expect(evaluated).toBe('Ironhack');
+      var evaluated = `${getSchool()}`;
+      expect(evaluated).toBe('Ironhack');
     });
   });
 });
@@ -118,7 +119,7 @@ describe('arrow functions. ', () => {
     let func = () => {
       /*........*/
     };
-    //expect(func()).toBe('I am func');
+    expect(func()).toBe('I am func');
   });
 
   it('a single expression, without curly braces returns too', function() {
